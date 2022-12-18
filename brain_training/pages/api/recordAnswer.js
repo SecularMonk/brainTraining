@@ -5,6 +5,7 @@ export default async function handler(req, res) {
    try {
       const payload = {
          ...(req?.body?.result && { result: req?.body?.result }),
+         ...(req?.body?.userId && { userId: req?.body?.userId }),
          ...(req?.body?.answer && { answer: req?.body?.answer }),
          ...(req?.body?.answerIsCorrect && { answerIsCorrect: req?.body?.answerIsCorrect }),
       };
@@ -14,7 +15,8 @@ export default async function handler(req, res) {
          variables: { answer: "No" },
          mutation: gql`
             mutation {
-               insertOneResponse(data: { answer: "${payload.answer}", answerIsCorrect: ${!!payload.answerIsCorrect} }) {
+               insertOneResponse(data: {
+                  userId: "${payload.userId}", answer: "${payload.answer}", answerIsCorrect: ${!!payload.answerIsCorrect} }) {
                   _id
                }
             }
