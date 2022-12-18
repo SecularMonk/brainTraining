@@ -1,9 +1,10 @@
 import Head from "next/head";
 import Footer from "../components/footer";
+import Header from "../components/header";
 import { useEffect, useState } from "react";
 import { Question } from "../classes";
 import axios from "axios";
-import styles from "../styles/Home.module.css";
+import styles from "../styles/Home.module.scss";
 
 export default function Home() {
    const [userAnswer, setUserAnswer] = useState(null);
@@ -35,6 +36,7 @@ export default function Home() {
             <meta name="description" content="SMART Brain Training" />
             <link rel="icon" href="/favicon.ico" />
          </Head>
+         <Header />
 
          <main className={styles.main}>
             {question && (
