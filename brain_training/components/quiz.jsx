@@ -3,9 +3,9 @@ import Footer from "../components/footer";
 import { useEffect, useState } from "react";
 import { Question } from "../classes";
 import axios from "axios";
-import styles from "../styles/Home.module.css";
+import styles from "../styles/Quiz.module.scss";
 
-export default function Quiz() {
+export default function Quiz({ session }) {
    const [userAnswer, setUserAnswer] = useState(null);
    const [correctAnswer, setCorrectAnswer] = useState(null);
    const [answerIsCorrect, setAnswerIsCorrect] = useState(false);
@@ -38,26 +38,29 @@ export default function Quiz() {
 
          <main className={styles.main}>
             {question && (
-               <div>
-                  <p>{question.getProblemStatement()}</p>
-                  <p>{question.getQuestion()}</p>
+               <div className={styles.questionContainer}>
+                  <p className={styles.questionContainer}>{question.getProblemStatement()}</p>
+                  <p className={styles.questionContainer}>{question.getQuestion()}</p>
                </div>
             )}
 
-            {!!options &&
-               options.length !== 0 &&
-               options.map((Element) => {
-                  return (
-                     <button
-                        key={Element}
-                        onClick={() => {
-                           recordAnswer(Element);
-                        }}
-                     >
-                        {Element}
-                     </button>
-                  );
-               })}
+            <div className={styles.answerButtonContainer}>
+               {!!options &&
+                  options.length !== 0 &&
+                  options.map((Element) => {
+                     return (
+                        <button
+                           key={Element}
+                           className={styles[`answerButton${Element}`]}
+                           onClick={() => {
+                              recordAnswer(Element);
+                           }}
+                        >
+                           {Element}
+                        </button>
+                     );
+                  })}
+            </div>
          </main>
 
          <Footer />
@@ -78,7 +81,7 @@ export default function Quiz() {
          setUserAnswer(answer);
          evaluateAnswer({ question });
          setOptionState(!optionState);
-         callRecordAnswerAPI({ answer });
+         callRecordAnswerAPI({ answer, session });
       } catch (error) {
          console.log(error);
       }
@@ -96,10 +99,11 @@ export default function Quiz() {
       }
    }
 
-   async function callRecordAnswerAPI({ answer }) {
+   async function callRecordAnswerAPI({ answer, session }) {
       try {
-         console.log(`callRecordAnswerAPI, ${JSON.stringify({ answer, answerIsCorrect })}`);
-         const result = await axios.post("http://localhost:3000/api/recordAnswer", { answer, answerIsCorrect });
+         const userId = session?.user?.userId ?? "";
+         console.log(`callRecordAnswerAPI, ${JSON.stringify({ userId, answer, answerIsCorrect })}`);
+         const result = await axios.post("http://localhost:3000/api/recordAnswer", { userId, answer, answerIsCorrect });
          console.log(JSON.stringify(result));
       } catch (error) {
          console.log(error);
