@@ -30,10 +30,10 @@ export default NextAuth({
          return true;
       },
       jwt: async ({ token, user }) => {
-         // if (user) {
-         //    console.log(JSON.stringify({ user }));
-         //    token.userId = user.id;
-         // }
+         if (user) {
+            // console.log(JSON.stringify({ user }));
+            token.userId = user.id;
+         }
          // if (account) {
          //    console.log(JSON.stringify({ account }));
          // }
