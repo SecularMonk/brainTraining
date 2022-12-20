@@ -1,6 +1,5 @@
 import Head from "next/head";
 import Footer from "../components/footer";
-import Header from "../components/header";
 import { useEffect, useState } from "react";
 import { Question } from "../classes";
 import axios from "axios";
@@ -36,7 +35,6 @@ export default function Home() {
             <meta name="description" content="SMART Brain Training" />
             <link rel="icon" href="/favicon.ico" />
          </Head>
-         <Header />
 
          <main className={styles.main}>
             {question && (
@@ -61,8 +59,6 @@ export default function Home() {
                   );
                })}
          </main>
-
-         <Footer />
       </div>
    );
 
