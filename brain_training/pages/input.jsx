@@ -1,19 +1,17 @@
-import Head from "next/head";
-import Footer from "../components/footer";
-import { useEffect, useState } from "react";
-import styles from "../styles/Home.module.scss";
-import SingleQuestion from "../components/SingleQuestion";
+import SingleQuestion from "../components/ui/SingleQuestion";
 import QuizContainer from "../components/ui/QuizContainer";
+import FeatureSection from "../components/ui/FeatureSection";
 import Hero from "../components/ui/Hero";
-import Header from "../components/header";
 import { useSession } from "next-auth/react";
 
-export default function Home() {
+export default function Input() {
    const { data: session } = useSession();
+
    if (session) {
       return (
          <div>
             <Hero />
+            <FeatureSection />
             <SingleQuestion session={session} />
             <QuizContainer />
          </div>
@@ -21,8 +19,8 @@ export default function Home() {
    } else {
       return (
          <div>
-            <Head></Head>
-            {/* <Quiz session={session}></Quiz> */}
+            <Hero />
+            <FeatureSection />
          </div>
       );
    }

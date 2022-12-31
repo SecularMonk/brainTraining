@@ -1,10 +1,5 @@
-import Head from "next/head";
-import Footer from "../components/footer";
-import { useEffect, useState } from "react";
 // import { Question } from "../classes";
-import axios from "axios";
 import QuizContainer from "../components/ui/QuizContainer";
-import BottomNav from "../components/ui/BottomNav";
 
 export default function Page() {
    return (
