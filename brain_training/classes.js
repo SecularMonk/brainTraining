@@ -1,10 +1,11 @@
 import { v4 as uuidv4 } from "uuid";
-
+import { getRandomIcons } from "./graphql/queries";
 export class Quiz {
    constructor({ difficulty = "Normal" }) {
       this.difficulty = difficulty;
       this.questions = [];
       this.currentQuestion = 0;
+      this.availableQuestionTypes = [PictorialQuestion, LexicalQuestion];
       this.initialiseQuiz();
    }
 
@@ -24,7 +25,9 @@ export class Quiz {
       const numQuestions = this.numQuestions ?? 0;
       const allQuestions = [];
       for (let i = 0, n = numQuestions; i < n; i++) {
-         const question = new Question({ numItems: this.numQuestions, textLength: 3 });
+         const randomNumber = Math.floor(Math.random() * this.availableQuestionTypes.length);
+         const questionType = this.availableQuestionTypes[randomNumber];
+         const question = new questionType({ numItems: this.numQuestions });
          allQuestions.push(question);
       }
       this.questions = allQuestions;
@@ -83,19 +86,19 @@ export class Quiz {
          question = this.questions[this.currentQuestion];
          this.currentQuestion += 1;
       }
-      question = new Question({ numItems: this.numItemsPerQuestion, textLength: 3 });
+      question = new Question({ numItems: this.numItemsPerQuestion });
       question.initialiseQuestion();
       return question;
    }
 }
 
 export class Question {
-   constructor({ numItems, textLength, problemStatement, question }) {
+   constructor({ numItems, problemStatement, question }) {
       this.numItems = numItems;
-      this.textLength = textLength;
+      this.textLength = 3;
       this.problemStatement = problemStatement;
       this.question = question;
-      // this.initialiseQuestion();
+      this.initialiseQuestion();
    }
 
    initialiseQuestion() {
@@ -272,5 +275,30 @@ export class Question {
 
    getOptions() {
       return this.options;
+   }
+}
+
+export class LexicalQuestion extends Question {
+   constructor({ numItems }) {
+      super({ numItems });
+      this.initialiseQuestion();
+   }
+}
+
+export class PictorialQuestion extends Question {
+   constructor({ numItems }) {
+      super({ numItems });
+      this.initialiseQuestion();
+   }
+
+   async fetchRandomIcons() {
+      const query = { numIcons: this.numItems };
+      const icons = await getRandomIcons(query);
+      if (!icons || !icons.getRandomIcons) return;
+      this.icons = icons.getRandomIcons;
+   }
+
+   getIcons() {
+      return this.icons;
    }
 }
