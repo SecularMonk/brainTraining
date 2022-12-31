@@ -3,7 +3,8 @@ import ProgressBar from "./ProgressBar";
 
 // export default function Question() {
 export default function Question({ problemStatement, question, options, setUserAnswer, answerSubmitted, setAnswerSubmitted, questionNumber, numQuestions }) {
-   const progress = Number(((questionNumber / numQuestions) * 100).toFixed(0));
+   let progress = Number(((questionNumber / numQuestions) * 100).toFixed(0));
+   if (isNaN(progress)) progress = 0;
    return (
       <div className="card-body">
          <h2 className="card-title">{problemStatement}</h2>

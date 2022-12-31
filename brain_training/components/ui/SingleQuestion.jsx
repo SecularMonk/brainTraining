@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { Question } from "../classes";
+import { Question } from "../../classes";
 import axios from "axios";
-import styles from "../styles/Quiz.module.scss";
-import QuestionContainer from "./ui/Question";
+import styles from "../../styles/Quiz.module.scss";
+import QuestionContainer from "./Question";
 
 export default function SingleQuestion({ quizId }) {
    const { data: session } = useSession();

@@ -4,6 +4,7 @@ import { Quiz } from "../../classes";
 import Question from "./Question";
 import QuizOptions from "./QuizOptions";
 import QuizCompleted from "./QuizCompleted";
+import { recordMultipleAnswers, recordSingleQuizResult } from "../../graphql/mutations";
 
 export default function QuizContainer({ difficulty = "normal" }) {
    const { data: session } = useSession();
@@ -20,15 +21,12 @@ export default function QuizContainer({ difficulty = "normal" }) {
    const [restarted, restart] = useState(false);
    const [numQuestions, setNumQuestions] = useState(10);
 
-   // useEffect(() => {
-   //    initialise();
-   // }, []);
-
    useEffect(() => {
       initialise();
       setStarted(false);
       setQuizComplete(false);
       setQuestionNumber(1);
+      console.log(`setting quizResult empty`);
       setQuizResult({});
    }, [restarted]);
 
@@ -39,6 +37,9 @@ export default function QuizContainer({ difficulty = "normal" }) {
 
    useEffect(() => {
       evaluateQuizResult();
+      if (quizComplete === true) {
+         recordResult();
+      }
    }, [quizComplete]);
 
    useEffect(() => {
@@ -88,12 +89,12 @@ export default function QuizContainer({ difficulty = "normal" }) {
 
    function setUserAnswer(answer) {
       const questionId = question.getUniqueId();
-      console.log(`questionId: ${questionId}`);
       const tempAnswers = answers.slice();
       const correctAnswer = question.getCorrectAnswer();
       console.log(JSON.stringify({ correctAnswer }));
       const correct = correctAnswer === answer;
-      const tempAnswer = { questionId, question, answer, correct };
+      const userId = session?.user?.userId ?? "";
+      const tempAnswer = { userId, questionId, problemStatement: question.problemStatement, question: question.question, answer, correct };
       tempAnswers.push(tempAnswer);
       setQuestionNumber(questionNumber + 1);
       console.log(JSON.stringify({ questionNumber, questionId, answer, correct }));
@@ -107,42 +108,28 @@ export default function QuizContainer({ difficulty = "normal" }) {
       }
    }
 
-   function evaluateQuizResult() {
+   async function evaluateQuizResult() {
       let correctAnswers = 0,
          totalAnswers = 0;
       console.log(`answers in evaluateQuizResult: ${JSON.stringify(answers)}`);
       for (let i = 0, n = answers.length; i < n; i++) {
          totalAnswers += 1;
-         console.log(typeof answers[i].correct);
          if (answers[i].correct === true) {
             correctAnswers += 1;
          }
       }
-      const quizResult = { correctAnswers, totalAnswers, quizId };
-      console.log(JSON.stringify({ quizResult }));
-      setQuizResult({ ...quizResult });
+      const userId = session?.user?.userId ?? "";
+      const quizResult = { correctAnswers, totalAnswers, quizId, userId };
+      console.log(`setting quiz result`);
+      setQuizResult(quizResult);
+      await recordSingleQuizResult({ quizResult });
+      console.log(`quizResult now: ${JSON.stringify(quizResult)}`);
    }
 
-   async function recordAnswers() {
+   async function recordResult() {
       try {
-         for (let i = 0, n = answers.length; i < n; i++) {
-            const answer = answers[i];
-            callRecordAnswerAPI({ ...answer });
-         }
-      } catch (error) {
-         console.log(error);
-      }
-   }
-
-   async function callRecordAnswerAPI({ questionId, question, answer, correct, session }) {
-      try {
-         console.log(JSON.stringify({ session }));
-         const userId = session?.user?.userId ?? "";
-         console.log(JSON.stringify({ userId }));
-         if (!userId) return;
-         // console.log(`callRecordAnswerAPI, ${JSON.stringify({ answer, answerIsCorrect })}`);
-         const result = await axios.post("http://localhost:3000/api/recordAnswer", { questionId, quizId, answer, answerIsCorrect: correct });
-         console.log(JSON.stringify(result));
+         await recordMultipleAnswers({ answers });
+         console.log("inside recordResult", JSON.stringify(quizResult));
       } catch (error) {
          console.log(error);
       }
