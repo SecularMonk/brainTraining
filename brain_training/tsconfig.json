@@ -18,6 +18,6 @@
       "@ui/*": ["./src.components/ui"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "classes.js", "pages/api/recordAnswer.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "classes.js", "pages/api/recordAnswer.js", "components/ui/Hamburger.jsx", "pages/_app.jsx", "graphql/queries.ts"],
   "exclude": ["node_modules"]
 }
