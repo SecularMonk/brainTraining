@@ -7,7 +7,6 @@ export default function Header() {
    const { data: session } = useSession();
    return (
       <div className={styles.header}>
-         <h1>Signed in as {session.user.userId}</h1>
          {/* <h1>{session ? "Session" : "No Session"}</h1> */}
          {session ? (
             <button className={styles.signOut} onClick={() => signOut()}>

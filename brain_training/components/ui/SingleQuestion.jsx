@@ -1,68 +1,52 @@
-import Head from "next/head";
 import { useEffect, useState } from "react";
-import { Question } from "../classes";
+import { useSession } from "next-auth/react";
+import { Question } from "../../classes";
 import axios from "axios";
-import styles from "../styles/Home.module.scss";
+import styles from "../../styles/Quiz.module.scss";
+import QuestionContainer from "./Question";
 
-export default function Home() {
+export default function SingleQuestion({ quizId }) {
+   const { data: session } = useSession();
+
    const [userAnswer, setUserAnswer] = useState(null);
    const [correctAnswer, setCorrectAnswer] = useState(null);
    const [answerIsCorrect, setAnswerIsCorrect] = useState(false);
    const [options, setOptions] = useState([]);
    const [question, setQuestion] = useState(null);
-   const [optionState, setOptionState] = useState(false);
+   const [answerSubmitted, setAnswerSubmitted] = useState(false);
+   const [questionData, setQuestionData] = useState(null);
 
    useEffect(() => {
-      initialise();
-   }, []);
-
-   useEffect(() => {
-      initialise();
       recordAnswer(userAnswer);
-      // console.log(JSON.stringify(newQuestion.getCorrectAnswer()));
-      // const tempStatement = neestion(tempQuestion2);
-   }, [userAnswer]);
+   }, [answerSubmitted]);
 
-   // useEffect(() => {
-   //    evaluateAnswer({ question });
-   // }, [optionState]);
+   useEffect(() => {
+      initialise();
+   }, [answerSubmitted]);
 
    return (
       <div className={styles.container}>
-         <Head>
-            <title>SMART Brain Training</title>
-            <meta name="description" content="SMART Brain Training" />
-            <link rel="icon" href="/favicon.ico" />
-         </Head>
-
          <main className={styles.main}>
             {question && (
-               <div>
-                  <p>{question.getProblemStatement()}</p>
-                  <p>{question.getQuestion()}</p>
-               </div>
+               <QuestionContainer
+                  problemStatement={questionData.problemStatement}
+                  question={questionData.question}
+                  options={["Yes", "No"]}
+                  // recordAnswer={recordAnswer}
+                  answerSubmitted={answerSubmitted}
+                  setUserAnswer={setUserAnswer}
+                  setAnswerSubmitted={setAnswerSubmitted}
+               ></QuestionContainer>
             )}
-
-            {!!options &&
-               options.length !== 0 &&
-               options.map((Element) => {
-                  return (
-                     <button
-                        key={Element}
-                        onClick={() => {
-                           recordAnswer(Element);
-                        }}
-                     >
-                        {Element}
-                     </button>
-                  );
-               })}
          </main>
       </div>
    );
 
    function initialise() {
+      console.log("initialise");
       const newQuestion = new Question({ numItems: 3, textLength: 3 });
+      newQuestion.initialiseQuestion();
+      setQuestionData(newQuestion.getQuizData());
       setQuestion(newQuestion);
       const options = newQuestion.getOptions();
       setOptions(options);
@@ -74,8 +58,7 @@ export default function Home() {
          console.log(`recording answer ${answer}`);
          setUserAnswer(answer);
          evaluateAnswer({ question });
-         setOptionState(!optionState);
-         callRecordAnswerAPI({ answer });
+         callRecordAnswerAPI({ answer, session });
       } catch (error) {
          console.log(error);
       }
@@ -93,10 +76,15 @@ export default function Home() {
       }
    }
 
-   async function callRecordAnswerAPI({ answer }) {
+   async function callRecordAnswerAPI({ answer, session }) {
       try {
+         console.log(JSON.stringify({ session }));
+         const userId = session?.user?.userId ?? "";
+         console.log(JSON.stringify({ userId }));
+         if (!userId) return;
          console.log(`callRecordAnswerAPI, ${JSON.stringify({ answer, answerIsCorrect })}`);
-         const result = await axios.post("http://localhost:3000/api/recordAnswer", { answer, answerIsCorrect });
+         const questionId = question.getUniqueId();
+         const result = await axios.post("http://localhost:3000/api/recordAnswer", { questionId, quizId, answer, answerIsCorrect });
          console.log(JSON.stringify(result));
       } catch (error) {
          console.log(error);

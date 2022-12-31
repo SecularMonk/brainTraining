@@ -1,7 +1,101 @@
+import { v4 as uuidv4 } from "uuid";
+import { getRandomIcons } from "./graphql/queries";
+export class Quiz {
+   constructor({ difficulty = "Normal" }) {
+      this.difficulty = difficulty;
+      this.questions = [];
+      this.currentQuestion = 0;
+      this.availableQuestionTypes = [PictorialQuestion, LexicalQuestion];
+      this.initialiseQuiz();
+   }
+
+   initialiseQuiz() {
+      this.createUniqueId();
+      const difficultySettings = this.getDifficultySettings({ setting: this.difficulty });
+      Object.assign(this, difficultySettings);
+      this.createQuestions();
+   }
+
+   createUniqueId() {
+      const _id = uuidv4();
+      this._id = _id;
+   }
+
+   createQuestions() {
+      const numQuestions = this.numQuestions ?? 0;
+      const allQuestions = [];
+      for (let i = 0, n = numQuestions; i < n; i++) {
+         const randomNumber = Math.floor(Math.random() * this.availableQuestionTypes.length);
+         const questionType = this.availableQuestionTypes[randomNumber];
+         const question = new questionType({ numItems: this.numQuestions });
+         allQuestions.push(question);
+      }
+      this.questions = allQuestions;
+   }
+
+   getDifficultySettings({ setting }) {
+      const settings = {
+         Easy: {
+            numQuestions: 5,
+            numItemsPerQuestion: 3,
+         },
+         Normal: {
+            numQuestions: 10,
+            numItemsPerQuestion: 4,
+         },
+         Hard: {
+            numQuestions: 15,
+            numItemsPerQuestion: 5,
+         },
+         default: this.easy,
+      };
+      if (!setting) setting = "default";
+      return settings[setting];
+   }
+
+   setDifficulty(difficulty) {
+      if (!difficulty || typeof difficulty !== "string") return;
+      this.difficulty = difficulty;
+      this.changeDifficulty();
+   }
+
+   changeDifficulty() {
+      const difficultySettings = this.getDifficultySettings({ setting: this.difficulty });
+      Object.assign(this, difficultySettings);
+      this.createQuestions();
+      console.log(JSON.stringify({ newDifficulty: this.difficulty, questions: this.questions }));
+   }
+
+   getUniqueId() {
+      return this._id;
+   }
+
+   getQuestions() {
+      return this.questions;
+   }
+
+   getNumQuestions() {
+      return this.questions.length;
+   }
+
+   getNextQuestion() {
+      let question;
+      if (this.currentQuestion === this.questions.length) {
+         question = this.questions[this.questions.length];
+      } else {
+         question = this.questions[this.currentQuestion];
+         this.currentQuestion += 1;
+      }
+      question = new Question({ numItems: this.numItemsPerQuestion });
+      question.initialiseQuestion();
+      return question;
+   }
+}
+
 export class Question {
-   constructor({ numItems, textLength, problemStatement, question }) {
+   constructor({ numItems, problemStatement, question }) {
       this.numItems = numItems;
-      this.textLength = textLength;
+      this.textLength = 3;
       this.problemStatement = problemStatement;
       this.question = question;
       this.initialiseQuestion();
@@ -12,9 +106,23 @@ export class Question {
          this.createRandomValues();
          this.createProblemStatement();
          this.createQuestion();
+         this.createUniqueId();
       } catch (error) {
          console.log(error);
       }
+   }
+
+   getQuizData() {
+      return {
+         _id: this.getUniqueId(),
+         problemStatement: this.getProblemStatement(),
+         question: this.getQuestion(),
+      };
+   }
+
+   createUniqueId() {
+      const _id = uuidv4();
+      this._id = _id;
    }
 
    createRandomValues() {
@@ -107,6 +215,10 @@ export class Question {
       }
    }
 
+   getUniqueId() {
+      return this._id;
+   }
+
    getQuestionValues() {
       return this.questionValues;
    }
@@ -128,14 +240,14 @@ export class Question {
          // return "Yes"
          const results = [];
          const allValues = this.getValues();
-         // console.log(JSON.stringify({ allValues }));
+         console.log(JSON.stringify({ allValues }));
          for (let i = 0, n = allValues.length; i < n; i++) {
             const comparator = allValues[i].comparator;
             const values = allValues[i]?.["values"];
             const mismatch = values.some((Element) => {
                return Element !== values[0];
             });
-            // console.log(JSON.stringify({ comparator, values, mismatch }));
+            console.log(JSON.stringify({ comparator, values, mismatch }));
             switch (true) {
                case mismatch === true && comparator === "equal":
                   results.push(0);
@@ -151,10 +263,11 @@ export class Question {
                   break;
             }
          }
-         // console.log(JSON.stringify({ results }));
-         return results.some((Element) => {
-            return Element !== results[0];
+         console.log(JSON.stringify({ results }));
+         const result = results.some((Element) => {
+            return Element !== 1;
          });
+         return result === true ? "Yes" : "No";
       } catch (error) {
          console.log(error);
       }
@@ -162,5 +275,30 @@ export class Question {
 
    getOptions() {
       return this.options;
+   }
+}
+
+export class LexicalQuestion extends Question {
+   constructor({ numItems }) {
+      super({ numItems });
+      this.initialiseQuestion();
+   }
+}
+
+export class PictorialQuestion extends Question {
+   constructor({ numItems }) {
+      super({ numItems });
+      this.initialiseQuestion();
+   }
+
+   async fetchRandomIcons() {
+      const query = { numIcons: this.numItems };
+      const icons = await getRandomIcons(query);
+      if (!icons || !icons.getRandomIcons) return;
+      this.icons = icons.getRandomIcons;
+   }
+
+   getIcons() {
+      return this.icons;
    }
 }
