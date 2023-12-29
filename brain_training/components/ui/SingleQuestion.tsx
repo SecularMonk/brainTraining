@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { Question } from "../../classes";
+import { Question } from "../../interfaces/classes";
 import axios from "axios";
 import styles from "../../styles/Quiz.module.scss";
 import QuestionContainer from "./Question";
 
-export default function SingleQuestion({ quizId }) {
+export default function SingleQuestion({ quizId }: { quizId: Schema.Quiz["_id"] }) {
    const { data: session } = useSession();
 
    const [userAnswer, setUserAnswer] = useState(null);
@@ -45,7 +45,7 @@ export default function SingleQuestion({ quizId }) {
    function initialise() {
       console.log("initialise");
       const newQuestion = new Question({ numItems: 3, textLength: 3 });
-      newQuestion.initialiseQuestion();
+      newQuestion.initialise();
       setQuestionData(newQuestion.getQuizData());
       setQuestion(newQuestion);
       const options = newQuestion.getOptions();

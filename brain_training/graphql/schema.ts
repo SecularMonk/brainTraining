@@ -24,6 +24,34 @@ export const GET_RANDOM_ICONS = gql`
    }
 `;
 
+export const GET_QUIZ = gql`
+   query GetQuiz($userId: UserId) {
+      getQuiz(userId: $userId) {
+         _id
+         userId
+         questions {
+            _id
+            quizId
+            options
+            problemStatement
+            question
+            correctAnswer
+            availableAnswers
+            correct
+         }
+         score
+         complete
+         createdAt
+      }
+   }
+`;
+
+export const SUBMIT_ANSWER = gql`
+   mutation SubmitAnswer($answer: AnswerInput) {
+      submitAnswer(answer: $answer)
+   }
+`;
+
 export type ANSWER_INSERT_INPUT = {
    answers: object[];
 };
@@ -33,5 +61,35 @@ export type QUIZ_RESULT_INSERT_INPUT = {
 };
 
 export type GET_RANDOM_ICONS_INPUT = {
-   input: object;
+   numIcons: number;
+};
+
+export type Quiz = {
+   _id: string;
+   createdAt: Date;
+   questions?: Question[];
+   score?: number;
+   userId: string;
+};
+
+export type Question = {
+   _id: string;
+   availableAnswers: string[];
+   correct?: boolean;
+   answered?: boolean;
+   userAnswer: Answer["userAnswer"];
+   correctAnswer: string;
+   options: string[];
+   problemStatement: string[];
+   question: string;
+   quizId: Quiz["_id"];
+};
+
+export type Answer = {
+   answerId: string;
+   userAnswer: string;
+   correct?: boolean;
+   questionId: Question["_id"];
+   quizId: Quiz["_id"];
+   userId: string;
 };

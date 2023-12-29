@@ -14,17 +14,15 @@ const buttonGroupStyles = cva("btn text-white", {
 });
 
 export default function QuizOptions({ selected, setSelected, setStarted, numQuestions }: QuizOptionsParameters) {
-   // const [selected, setSelected] = useState("Normal");
-
    const options: DifficultyOptions[] = [{ text: "Easy" }, { text: "Normal" }, { text: "Hard" }];
    return (
       <div className="card-body">
          <h2 className="card-title">Choose your difficulty.</h2>
-         <div className="btn-group justify-center btn-block">{renderOptions({ options })}</div>
+         <div className="btn-group justify-center btn-block">{renderOptions(options)}</div>
          <p>Contains {numQuestions} questions.</p>
          <Button
             key="start"
-            intent="primary"
+            intent="cta"
             onClick={() => {
                setStarted(true);
             }}
@@ -34,7 +32,7 @@ export default function QuizOptions({ selected, setSelected, setStarted, numQues
       </div>
    );
 
-   function renderOptions({ options }) {
+   function renderOptions(options: any[]) {
       return (
          options &&
          options.map((Element) => {

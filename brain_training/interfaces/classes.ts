@@ -1,15 +1,18 @@
-import { v4 as uuidv4 } from "uuid";
-import { getRandomIcons } from "./graphql/queries";
-export class Quiz {
-   constructor({ difficulty = "Normal" }) {
+import { Schema } from "inspector";
+import { getRandomIcons } from "@/graphql/queries";
+
+export class IQuiz implements Quiz {
+   difficulty: Difficulty;
+   questions: [];
+   constructor({ difficulty = "medium" }: { difficulty?: Difficulty }) {
       this.difficulty = difficulty;
       this.questions = [];
       this.currentQuestion = 0;
       this.availableQuestionTypes = [PictorialQuestion, LexicalQuestion];
-      this.initialiseQuiz();
+      this.initialise();
    }
 
-   initialiseQuiz() {
+   initialise() {
       this.createUniqueId();
       const difficultySettings = this.getDifficultySettings({ setting: this.difficulty });
       Object.assign(this, difficultySettings);
@@ -17,7 +20,7 @@ export class Quiz {
    }
 
    createUniqueId() {
-      const _id = uuidv4();
+      const _id = crypto.randomUUID();
       this._id = _id;
    }
 
@@ -63,7 +66,7 @@ export class Quiz {
       const difficultySettings = this.getDifficultySettings({ setting: this.difficulty });
       Object.assign(this, difficultySettings);
       this.createQuestions();
-      console.log(JSON.stringify({ newDifficulty: this.difficulty, questions: this.questions }));
+      // console.log(JSON.stringify({ newDifficulty: this.difficulty, questions: this.questions }));
    }
 
    getUniqueId() {
@@ -87,7 +90,7 @@ export class Quiz {
          this.currentQuestion += 1;
       }
       question = new Question({ numItems: this.numItemsPerQuestion });
-      question.initialiseQuestion();
+      question.initialise();
       return question;
    }
 }
@@ -98,15 +101,16 @@ export class Question {
       this.textLength = 3;
       this.problemStatement = problemStatement;
       this.question = question;
-      this.initialiseQuestion();
+      this.initialise();
    }
 
-   initialiseQuestion() {
+   async initialise() {
       try {
-         this.createRandomValues();
-         this.createProblemStatement();
-         this.createQuestion();
          this.createUniqueId();
+         this.createInternalValues();
+         this.createProblemStatement();
+         await this.fetchRandomIcons();
+         this.createQuestion();
       } catch (error) {
          console.log(error);
       }
@@ -121,20 +125,20 @@ export class Question {
    }
 
    createUniqueId() {
-      const _id = uuidv4();
+      const _id = crypto.randomUUID();
       this._id = _id;
    }
 
-   createRandomValues() {
+   createInternalValues() {
       try {
-         const result = {};
+         const internalValues = [];
          const numItems = this?.numItems ?? 3;
          for (let i = 0, n = numItems; i < n; i++) {
             const valueName = this.createRandomString();
             const value = Math.floor(Math.random() * 2);
-            result[valueName] = value;
+            internalValues.push({ value, valueName });
          }
-         this.questionValues = result;
+         this.internalValues = internalValues;
       } catch (error) {
          console.log(error);
       }
@@ -146,20 +150,20 @@ export class Question {
       let newString = "";
       const textLength = this?.textLength ?? 3;
       for (let i = 0; i < textLength; i++) {
-         const randomElement = this.selectRandomElement({ string: text });
-         newString += this.selectRandomElement({ string: randomElement });
+         const randomElement = this.selectRandomElement({ iterable: text });
+         newString += this.selectRandomElement({ iterable: randomElement });
       }
       return newString;
    }
 
-   selectRandomElement({ string }) {
+   selectRandomElement({ iterable }) {
       try {
          // console.log(`selectRandomElement input: ${JSON.stringify(string)}`);
-         if (!string || string.length === 0) return console.log(`Please provide a non-empty string. Received ${string}.`);
-         const randomNumber = Math.floor(Math.random() * string.length);
-         const result = string[randomNumber];
+         if (!iterable || iterable.length === 0) return console.log(`Please provide a non-empty string. Received ${iterable}.`);
+         const randomNumber = Math.floor(Math.random() * iterable.length);
+         const result = iterable[randomNumber];
          // console.log(JSON.stringify(result));
-         return string[randomNumber];
+         return iterable[randomNumber];
       } catch (error) {
          console.log(error);
       }
@@ -167,20 +171,20 @@ export class Question {
 
    createProblemStatement() {
       try {
-         const questionValues = this.questionValues;
-         if (!questionValues) return console.log(`Unable to create question without named values. Please create named values before continuing.`);
-         const questionValueKeys = Object.keys(questionValues);
-         let problemStatement = "";
-         for (let i = 0, n = questionValueKeys.length - 1; i < n; i++) {
-            const thisValueName = questionValueKeys[i];
-            const thisValue = questionValues[thisValueName];
+         const internalValues = this.internalValues;
 
-            const nextValueName = questionValueKeys[i + 1];
-            const nextValue = questionValues[nextValueName];
+         if (!internalValues) return console.log(`Unable to create question without named values. Please create named values before continuing.`);
+         let problemStatement = [];
+         for (let i = 0, n = internalValues.length - 1; i < n; i++) {
+            const thisValueName = internalValues[i].valueName;
+            const thisValue = internalValues[i].value;
+
+            const nextValueName = internalValues[i + 1].valueName;
+            const nextValue = internalValues[i + 1].value;
 
             const valuesAreEqual = thisValue === nextValue;
             const string = `${thisValueName} is ${valuesAreEqual ? "equal" : "opposite"} to ${nextValueName}.\n`;
-            problemStatement += string;
+            problemStatement.push(string);
          }
          this.problemStatement = problemStatement;
       } catch (error) {
@@ -188,39 +192,55 @@ export class Question {
       }
    }
 
-   createQuestion() {
-      try {
-         const questionValues = this.questionValues;
-         if (!questionValues) return console.log(`Unable to create question without named values. Please create named values before continuing.`);
-         const questionValueKeys = Object.keys(questionValues);
-         let randomNumber = Math.floor(Math.random() * questionValueKeys.length);
-         if (randomNumber < 1) randomNumber = 1;
-         const subArray1 = questionValueKeys.splice(0, randomNumber);
-         const subArray2 = questionValueKeys;
-         // console.log(JSON.stringify({ subArray1 }));
-         const value1 = this.selectRandomElement({ string: subArray1 });
-         const value2 = this.selectRandomElement({ string: subArray2 });
-
-         const options = ["equal", "opposite"];
-         const comparator = options[Math.floor(Math.random() * options.length)];
-         const question = `Is ${value1} ${comparator} to ${value2}?`;
-         this.values = [{ values: [questionValues[value1], questionValues[value2]], comparator }];
-         // let answer = questionValues[value1] === questionValues[value2] ? "Yes" : "No";
-         // if (comparator === "opposite") answer = !answer;
-         this.question = question;
-         // this.answer = answer;
-         this.options = ["Yes", "No"];
-      } catch (error) {
-         console.log(error);
+   async fetchRandomIcons() {
+      const query = { numIcons: this.numItems };
+      const icons = await getRandomIcons(query);
+      // console.log(`icons fetched: ${JSON.stringify(icons)}`);
+      if (!icons || !icons.getRandomIcons) return;
+      const internalValues = this.internalValues;
+      if (!internalValues) return;
+      for (let i = 0, n = internalValues.length; i < n; i++) {
+         internalValues[i].icon = icons.getRandomIcons[i].base64;
       }
+      // this.setInternalValues(internalValues);
+      this.icons = icons.getRandomIcons;
+   }
+
+      createQuestion() {
+         try {
+            const questionValues = this.internalValues;
+
+            if (!questionValues) return console.log(`Unable to create question without named values. Please create named values before continuing.`);
+            let randomNumber = Math.floor(Math.random() * questionValues.length);
+            if (randomNumber < 1) randomNumber = 1;
+            const subArray1 = questionValues.splice(0, randomNumber);
+            const subArray2 = questionValues;
+            // console.log(JSON.stringify({ subArray1 }));
+            const value1 = this.selectRandomElement({ iterable: subArray1 });
+            const value2 = this.selectRandomElement({ iterable: subArray2 });
+
+            const options = ["equal", "opposite"];
+            const comparator = options[Math.floor(Math.random() * options.length)];
+            const question = `Is ${value1.valueName} ${comparator} to ${value2.valueName}?`;
+            this.values = [{ values: [value1.value, value2.value, comparator] }];
+            this.question = question;
+            this.options = ["Yes", "No"];
+         } catch (error) {
+            console.log(error);
+         }
+      }
+
+   setInternalValues(values) {
+      if (!values || !Array.isArray(values)) return;
+      this.internalValues = values;
    }
 
    getUniqueId() {
       return this._id;
    }
 
-   getQuestionValues() {
-      return this.questionValues;
+   getInternalValues() {
+      return this.internalValues;
    }
 
    getValues() {
@@ -240,7 +260,7 @@ export class Question {
          // return "Yes"
          const results = [];
          const allValues = this.getValues();
-         console.log(JSON.stringify({ allValues }));
+         // console.log(JSON.stringify({ allValues }));
          for (let i = 0, n = allValues.length; i < n; i++) {
             const comparator = allValues[i].comparator;
             const values = allValues[i]?.["values"];
@@ -281,14 +301,14 @@ export class Question {
 export class LexicalQuestion extends Question {
    constructor({ numItems }) {
       super({ numItems });
-      this.initialiseQuestion();
+      this.initialise();
    }
 }
 
 export class PictorialQuestion extends Question {
    constructor({ numItems }) {
       super({ numItems });
-      this.initialiseQuestion();
+      this.initialise();
    }
 
    async fetchRandomIcons() {

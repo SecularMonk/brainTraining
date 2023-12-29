@@ -1,4 +1,4 @@
-import { client } from "../apolloConfig";
+import { client } from "./apolloConfig";
 import { INSERT_MANY_ANSWERS, ANSWER_INSERT_INPUT, INSERT_ONE_QUIZ_RESULT, QUIZ_RESULT_INSERT_INPUT } from "./schema";
 
 export async function recordMultipleAnswers(answers: ANSWER_INSERT_INPUT) {

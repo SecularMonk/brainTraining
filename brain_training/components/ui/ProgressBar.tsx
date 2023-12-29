@@ -10,6 +10,14 @@ const progressBarStyles = cva("progress flex items-center justify-center", {
    },
 });
 
-export default function ProgressBar({ intent = "primary", value }) {
-   return <progress className={progressBarStyles({ intent })} value={value} max="100"></progress>;
+export default function ProgressBar({
+   intent = "primary",
+   value,
+   max,
+}: {
+   intent: "primary" | "secondary" | "danger" | null | undefined;
+   value: number;
+   max?: number;
+}) {
+   return <progress className={progressBarStyles({ intent })} value={value} max={max ? max : 100}></progress>;
 }

@@ -1,23 +1,32 @@
 {
-  "compilerOptions": {
-    "target": "es5",
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "jsx": "preserve",
-    "incremental": true,
-    "paths": {
-      "@ui/*": ["./src.components/ui"]
-    }
-  },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "classes.js", "pages/api/recordAnswer.js", "components/ui/Hamburger.jsx", "pages/_app.jsx", "graphql/queries.ts"],
-  "exclude": ["node_modules"]
+   "compilerOptions": {
+      "target": "es5",
+      "lib": ["dom", "dom.iterable", "esnext"],
+      "allowJs": true,
+      "skipLibCheck": true,
+      "strict": true,
+      "forceConsistentCasingInFileNames": true,
+      "noEmit": true,
+      "esModuleInterop": true,
+      "module": "commonjs",
+      "moduleResolution": "node",
+      "resolveJsonModule": true,
+      "isolatedModules": true,
+      "jsx": "preserve",
+      "incremental": true,
+      "paths": {
+         "@/*": ["./*"]
+      }
+   },
+   "include": [
+      "interfaces/*",
+      "interfaces/types.d.ts",
+      "next-env.d.ts",
+      "**/*.ts",
+      "**/*.tsx",
+      "**/*.d.ts",
+      "classes.ts",
+      "graphql/queries.ts"
+   ],
+   "exclude": ["node_modules"]
 }

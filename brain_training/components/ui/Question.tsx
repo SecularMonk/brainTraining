@@ -1,23 +1,24 @@
 import Button from "./Button";
 import ProgressBar from "./ProgressBar";
+import { Quiz, Question as IQuestion, Answer } from "@/graphql/schema";
+
+type QuestionParams = IQuestion & { setUserAnswer: (answer: Answer["userAnswer"]) => void; questionNumber: number };
 
 // export default function Question() {
-export default function Question({ problemStatement, question, options, setUserAnswer, answerSubmitted, setAnswerSubmitted, questionNumber, numQuestions }) {
-   let progress = Number(((questionNumber / numQuestions) * 100).toFixed(0));
-   if (isNaN(progress)) progress = 0;
+export default function Question({ problemStatement, question, options, availableAnswers, setUserAnswer, questionNumber }: QuestionParams) {
+   console.log(`Question component params: ${JSON.stringify({ problemStatement, question, options, setUserAnswer, questionNumber })}`);
    return (
-      <div className="card-body">
+      <div className="card-body card flex justify-center self-center w-fit">
          <h2 className="card-title">{problemStatement}</h2>
          <p>{question}</p>
          <div className="card-actions justify-end">
-            {options &&
-               options.map((Element) => {
-                  const intent = Element === "Yes" ? "primary" : "secondary";
+            {availableAnswers &&
+               availableAnswers.map((Element, index) => {
+                  const intent = index === 1 ? "secondary" : "primary";
                   return (
                      <Button
                         onClick={() => {
                            setUserAnswer(Element);
-                           if (setAnswerSubmitted) setAnswerSubmitted(!answerSubmitted);
                         }}
                         key={Element}
                         intent={intent}
@@ -28,7 +29,6 @@ export default function Question({ problemStatement, question, options, setUserA
                   );
                })}
          </div>
-         <ProgressBar intent="primary" value={progress} />
       </div>
    );
 }

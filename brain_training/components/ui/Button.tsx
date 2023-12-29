@@ -9,6 +9,7 @@ const buttonStyles = cva(
             primary: "bg-cyan-500 text-white",
             secondary: "bg-gray-200 text-gray-900 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-100 focus:ring-gray-500",
             danger: "bg-red-500 text-white focus:ring-red-500",
+            cta: "bg-green-500 text-black focus:ring-green-500",
          },
          fullWidth: {
             true: "w-full",
@@ -23,5 +24,5 @@ const buttonStyles = cva(
 export interface Props extends ButtonOrLinkProps, VariantProps<typeof buttonStyles> {}
 
 export default function Button({ intent = "primary", fullWidth = false, ...props }: Props) {
-   return <ButtonOrLink className={buttonStyles({ intent, fullWidth })} {...props} />;
+   return <button className={buttonStyles({ intent, fullWidth })} {...props} />;
 }

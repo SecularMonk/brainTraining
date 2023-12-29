@@ -5,7 +5,12 @@ import Hamburger from "./Hamburger";
 import Drawer from "./Drawer";
 import { useSession } from "next-auth/react";
 
-export default function Navbar({ drawerIsOpen, toggleDrawer }) {
+interface NavBarProps {
+   drawerIsOpen: boolean;
+   toggleDrawer: any;
+}
+
+export default function Navbar({ drawerIsOpen, toggleDrawer }: NavBarProps) {
    const { data: session } = useSession();
 
    return (

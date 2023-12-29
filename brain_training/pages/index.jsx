@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { useEffect, useState } from "react";
-import { Question } from "../classes";
+import { Question } from "../interfaces/classes";
 import axios from "axios";
 import styles from "../styles/Home.module.scss";
 
@@ -93,13 +93,13 @@ export default function Home() {
       }
    }
 
-   async function callRecordAnswerAPI({ answer }) {
-      try {
-         console.log(`callRecordAnswerAPI, ${JSON.stringify({ answer, answerIsCorrect })}`);
-         const result = await axios.post("http://localhost:3000/api/recordAnswer", { answer, answerIsCorrect });
-         console.log(JSON.stringify(result));
-      } catch (error) {
-         console.log(error);
-      }
-   }
+   // async function callRecordAnswerAPI({ answer }) {
+   //    try {
+   //       console.log(`callRecordAnswerAPI, ${JSON.stringify({ answer, answerIsCorrect })}`);
+   //       const result = await axios.post("http://localhost:3000/api/recordAnswer", { answer, answerIsCorrect });
+   //       console.log(JSON.stringify(result));
+   //    } catch (error) {
+   //       console.log(error);
+   //    }
+   // }
 }

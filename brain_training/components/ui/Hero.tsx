@@ -1,5 +1,7 @@
 import { Inter, Rubik, Poppins } from "@next/font/google";
 import clsx from "clsx";
+import { ButtonOrLink } from "./ButtonOrLink";
+import Button from "./Button";
 
 export const title = Poppins({
    subsets: ["latin"],
@@ -22,9 +24,9 @@ export default function Hero() {
             <div className="max-w-md">
                <h1 className={clsx("mb-5 text-6xl font-bold text-white", title.className)}>BOOST YOUR BRAIN POWER</h1>
                <p className={clsx("mb-5 text-gray-300", text.className)}>The only science-backed way to improve your IQ.</p>
-               <button className="btn btn-primary" href="http://localhost:3000/api/auth/signin">
+               <Button className="btn btn-primary" href="http://localhost:3000/api/auth/signin">
                   Get started
-               </button>
+               </Button>
             </div>
          </div>
       </div>
