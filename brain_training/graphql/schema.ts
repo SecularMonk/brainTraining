@@ -52,6 +52,25 @@ export const SUBMIT_ANSWER = gql`
    }
 `;
 
+export const GET_USER = gql`
+   query GetUser($userId: String!) {
+      getUser(userId: $userId) {
+         _id
+         username
+         engagements {
+            totalQuizzes
+            totalQuestions
+            totalAnswers
+            correctAnswer
+            quizComplete
+            numActiveDays
+            streakLength
+            lastActiveDay
+         }
+      }
+   }
+`;
+
 export type ANSWER_INSERT_INPUT = {
    answers: object[];
 };
@@ -92,4 +111,21 @@ export type Answer = {
    questionId: Question["_id"];
    quizId: Quiz["_id"];
    userId: string;
+};
+
+export type User = {
+   _id?: string;
+   engagements?: Engagements;
+   username?: string;
+};
+
+export type Engagements = {
+   correctAnswer?: number;
+   lastActiveDay?: Date;
+   numActiveDays?: number;
+   quizComplete?: number;
+   streakLength?: number;
+   totalAnswers?: number;
+   totalQuestions?: number;
+   totalQuizzes?: number;
 };

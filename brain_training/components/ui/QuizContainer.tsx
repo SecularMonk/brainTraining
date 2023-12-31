@@ -22,10 +22,8 @@ export default function QuizContainer({ difficulty = "normal" }) {
    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
    const [userAnswers, setUserAnswers] = useState<UserAnswer[]>([]);
    const [progress, setProgress] = useState(0);
-   const { data: queryData, error: queryError, loading: queryLoading, refetch } = useQuery<{ getQuiz: Quiz }>(GET_QUIZ, { variables: { userId: "testUser1" } });
+   const { data: queryData, error: queryError, loading: queryLoading } = useQuery<{ getQuiz: Quiz }>(GET_QUIZ, { variables: { userId: "testUser1" } });
    const [submitAnswer] = useMutation(SUBMIT_ANSWER, { variables: {} });
-
-   console.log(`data: `, queryData, "loading: ", queryLoading, "error: ", queryError);
 
    if (queryError) console.error(queryError);
 
@@ -104,8 +102,8 @@ export default function QuizContainer({ difficulty = "normal" }) {
    }
 
    return (
-      <div className="container mx-auto max-w-full bg-transparent h-96 p-6 flex items-center justify-center content-center">
-         <div className="card flex justify-center self-center max-w-fit bg-base-100 shadow-xl container mx-auto bg-transparent h-96 p-6 items-center content-center">
+      <div className="mx-auto max-w-full bg-transparent h-2/3 p-6 flex items-center justify-center content-center">
+         <div className="card flex justify-center self-center max-w-fit shadow-xl container min-w-full mx-auto bg-gray-800 h-96 p-6 items-center content-center">
             {queryLoading && <p>Loading...</p>}
             {queryError && (
                <div>

@@ -4,11 +4,11 @@ import Button from "./Button";
 import { cva } from "class-variance-authority";
 import { QuizOptionsParameters, DifficultyOptions } from "../../interfaces/QuizOptions";
 
-const buttonGroupStyles = cva("btn text-white", {
+const buttonGroupStyles = cva("btn text-white flex w-fit hover:bg-gray-600", {
    variants: {
       intent: {
-         active: "bg-cyan-500",
-         inactive: "",
+         active: "bg-green-500 hover:bg-green-600",
+         inactive: "bg-gray-500",
       },
    },
 });
@@ -16,10 +16,11 @@ const buttonGroupStyles = cva("btn text-white", {
 export default function QuizOptions({ selected, setSelected, setStarted, numQuestions }: QuizOptionsParameters) {
    const options: DifficultyOptions[] = [{ text: "Easy" }, { text: "Normal" }, { text: "Hard" }];
    return (
-      <div className="card-body">
-         <h2 className="card-title">Choose your difficulty.</h2>
-         <div className="btn-group justify-center btn-block">{renderOptions(options)}</div>
-         <p>Contains {numQuestions} questions.</p>
+      // <div className="card-body card flex justify-center self-center w-fit">
+      <div className="card-body flex justify-center self-center min-w-fit w-2/3">
+         <h2 className="card-title flex justify-center self-center w-fit">Choose your difficulty.</h2>
+         <div className="btn-group flex justify-center btn-block">{renderOptions(options)}</div>
+         <p className="flex justify-center self-center">Contains {numQuestions} questions.</p>
          <Button
             key="start"
             intent="cta"
@@ -39,7 +40,7 @@ export default function QuizOptions({ selected, setSelected, setStarted, numQues
             const intent = Element.text === selected ? "active" : "inactive";
             return (
                <Button
-                  key={Element.text}
+                  key={`quiz-options-${crypto.randomUUID()}`}
                   fullWidth={true}
                   className={buttonGroupStyles({ intent })}
                   onClick={() => {

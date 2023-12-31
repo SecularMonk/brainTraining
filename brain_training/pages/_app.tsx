@@ -33,7 +33,6 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
          <SessionProvider session={session}>
             <Navbar drawerIsOpen={drawerIsOpen} toggleDrawer={toggleDrawer} />
             <Drawer drawerIsOpen={drawerIsOpen} toggleDrawer={toggleDrawer} />
-            {/* <Hero /> */}
             <Component session={session} {...pageProps} />
             <Footer />
             <BottomNav />
