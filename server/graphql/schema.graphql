@@ -1,0 +1,113 @@
+scalar ObjectId
+scalar UserId
+scalar QuizId
+scalar QuestionId
+scalar AnswerId
+scalar TransactionId
+scalar Date
+scalar Difficulty
+
+type Query {
+   getUser(userId: String!): User
+   getAnything: [Icon]
+   getQuiz(userId: UserId): Quiz
+   engagements(userId: UserId): Engagements
+   matchWords(word: String): [DictionaryWord]
+}
+
+type Mutation {
+   createQuiz(input: CreateQuizInput): Quiz
+   submitAnswer(answer: AnswerInput): AnswerId
+}
+
+type Icon {
+   _id: ObjectId
+   type: String
+   base64: String
+   description: String
+}
+
+type User {
+   _id: UserId
+   username: String
+   engagements: Engagements
+}
+
+type Engagements {
+   totalQuizzes: Int
+   totalQuestions: Int
+   totalAnswers: Int
+   correctAnswer: Int
+   quizComplete: Int
+   numActiveDays: Int
+   streakLength: Int
+   lastActiveDay: Date
+}
+
+type Quiz {
+   _id: QuizId!
+   userId: UserId!
+   questions: [Question]
+   score: Float
+   createdAt: Date!
+   complete: Boolean
+   difficulty: Difficulty!
+   rewards: [Transaction]
+}
+
+type Transaction {
+   _id: TransactionId
+   rewardType: String
+   rewardAmount: Int
+}
+
+type Question {
+   _id: QuestionId!
+   quizId: QuizId!
+   options: [String!]!
+   problemStatement: [String!]!
+   question: String!
+   correctAnswer: String
+   availableAnswers: [String!]!
+   userAnswer: String
+   correct: Boolean
+   answered: Boolean
+}
+
+type Answer {
+   _id: String
+   answerId: AnswerId!
+   userId: UserId!
+   questionId: QuestionId!
+   quizId: QuizId!
+   userAnswer: String!
+   correct: Boolean
+   createdAt: Date
+}
+
+input AnswerInput {
+   answerId: AnswerId!
+   userId: UserId!
+   questionId: QuestionId!
+   quizId: QuizId!
+   userAnswer: String!
+   createdAt: Date
+}
+
+input CreateQuizInput {
+   userId: UserId!
+   difficulty: Difficulty
+}
+
+type Event {
+   userId: UserId
+   event: String
+   createdAt: Date
+   answerId: AnswerId
+   questionId: QuestionId
+   quizId: QuizId
+}
+
+type DictionaryWord {
+   word: String!
+}

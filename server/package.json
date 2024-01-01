@@ -1,0 +1,38 @@
+{
+   "name": "brain_training_server",
+   "version": "1.0.0",
+   "description": "",
+   "main": "index.js",
+   "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1",
+      "generate": "graphql-codegen --config codegen.yml",
+      "start": "tsc && ts-node --esm ./src/index.ts",
+      "watch": "concurrently  --names \"CodeGen,TS,Nodemon\" -c \"bgYellow,bgBlue,bgMagenta\" \"graphql-codegen --watch 'src/**/*.ts'\"  \"tsc -w \" \"nodemon ./dist/index.js \""
+   },
+   "keywords": [],
+   "author": "",
+   "license": "ISC",
+   "type": "module",
+   "dependencies": {
+      "@apollo/server": "^4.9.4",
+      "@types/mongodb": "^4.0.7",
+      "apollo-datasource-mongodb": "^0.6.0",
+      "concurrently": "^8.2.1",
+      "dotenv": "^16.3.1",
+      "graphql": "^16.8.1",
+      "graphql-scalars": "^1.22.3",
+      "lodash": "^4.17.21",
+      "mongodb": "^6.1.0",
+      "mongoose": "^7.6.0",
+      "ts-node": "^10.9.2",
+      "winston": "^3.11.0"
+   },
+   "devDependencies": {
+      "@graphql-codegen/cli": "^5.0.0",
+      "@graphql-codegen/typescript": "^4.0.1",
+      "@graphql-codegen/typescript-resolvers": "^4.0.1",
+      "@types/lodash": "^4.14.202",
+      "@types/node": "^20.8.3",
+      "typescript": "^5.2.2"
+   }
+}
