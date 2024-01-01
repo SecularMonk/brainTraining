@@ -19,7 +19,7 @@ jobs:
         node-version: '16' # You can choose the Node.js version
 
     - name: Install TypeScript & TSC
-      run: npm install -g typescript tsc
+      run: npm install -g typescript
 
     - name: Compile
       working-directory: ./realmApp
