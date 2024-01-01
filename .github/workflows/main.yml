@@ -22,7 +22,7 @@ jobs:
       run: npm install -g typescript
 
     - name: Install AppServices Package
-      run: npm install appservices
+      run: npm install atlas-app-services
 
     - name: Login to AppServices
       env: 
