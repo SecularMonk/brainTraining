@@ -20,7 +20,7 @@ jobs:
 
     - name: Install dependencies
       working-directory: ./realmApp
-      run: npm install -g
+      run: npm install
 
     - name: Compile
       working-directory: ./realmApp
