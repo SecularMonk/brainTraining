@@ -27,6 +27,11 @@ jobs:
     - name: Install AppServices Package
       run: npm install -g atlas-app-services-cli
 
+    - name: TEST
+      env: 
+        REALM_PUBLIC_KEY: ${{secrets.REALM_PUBLIC_KEY}}
+        REALM_PRIVATE_KEY: ${{secrets.REALM_PRIVATE_KEY}}
+      run: echo REALM_PUBLIC_KEY
     - name: Login to AppServices
       env: 
         REALM_PUBLIC_KEY: ${{secrets.REALM_PUBLIC_KEY}}
