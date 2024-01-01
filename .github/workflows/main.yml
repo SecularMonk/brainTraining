@@ -21,8 +21,11 @@ jobs:
     - name: Install TypeScript
       run: npm install -g typescript
 
+    - name: Compile
+      run: tsc
+
     - name: Install AppServices Package
-      run: npm install atlas-app-services-cli
+      run: npm install -g atlas-app-services-cli
 
     - name: Login to AppServices
       env: 
