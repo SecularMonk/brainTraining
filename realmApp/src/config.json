@@ -1,0 +1,21 @@
+[
+    {
+        "name": "evaluateAnswer",
+        "private": false
+    },
+    {
+        "name": "updateEngagementSummary",
+        "private": false,
+        "disable_arg_logs": true
+    },
+    {
+        "name": "generateXP",
+        "private": false,
+        "disable_arg_logs": true
+    },
+    {
+        "name": "levelUp",
+        "private": false,
+        "disable_arg_logs": true
+    }
+]

@@ -1,0 +1,19 @@
+{
+   "compilerOptions": {
+      "target": "ES2020",
+      "rootDir": "src",
+      "outDir": "functions",
+      "sourceMap": false,
+      "forceConsistentCasingInFileNames": true,
+      "noEmitHelpers": true,
+      "esModuleInterop": true,
+      "module": "commonjs",
+      "moduleResolution": "node",
+      "resolveJsonModule": true,
+      "isolatedModules": true,
+      "incremental": true,
+      "ignoreDeprecations": "5.0",
+      "noImplicitUseStrict": true,
+   },
+   "include": ["src/*", "realm.d.ts"]
+}
