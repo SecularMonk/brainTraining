@@ -20,7 +20,7 @@ jobs:
 
     - name: Install dependencies
       working-directory: ./realmApp
-      run: npm install -g
+      run: npm install
 
     - name: Compile
       working-directory: ./realmApp
@@ -38,4 +38,4 @@ jobs:
       env: 
         REALM_APP_ID: ${{secrets.REALM_APP_ID}}
       working-directory: ./realmApp
-      run: appservices push --remote="$REALM_APP_ID"
+      run: appservices push -y --remote="$REALM_APP_ID"
