@@ -36,4 +36,4 @@ jobs:
       env: 
         REALM_APP_ID: ${{secrets.REALM_APP_ID}}
       working-directory: ./realmApp
-      run: appservices push --remote=REALM_APP_ID
+      run: appservices push --remote="$REALM_APP_ID"
