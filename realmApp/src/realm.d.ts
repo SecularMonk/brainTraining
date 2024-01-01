@@ -1,5 +1,6 @@
 export {};
 
+//@ts-ignore
 import { MongoClient } from "mongodb";
 
 export type Services = {

@@ -1,6 +1,5 @@
 import Head from "next/head";
 import { useEffect, useState } from "react";
-import { Question } from "../interfaces/classes";
 import axios from "axios";
 import styles from "../styles/Home.module.scss";
 import QuizContainer from "../components/ui/QuizContainer";

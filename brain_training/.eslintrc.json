@@ -5,5 +5,8 @@
    "plugins": ["@typescript-eslint"],
    "parserOptions": {
       "ecmaVersion": "latest"
-   }
+   },
+   "ignorePatterns": [
+      "lib", "jest.config.js"
+   ]
 }

@@ -5,7 +5,7 @@ function classNames(...classes: []) {
    return classes.filter(Boolean).join(" ");
 }
 
-export default function LabeledDropdown({ drawerIsOpen, toggleDrawer }) {
+export default function LabeledDropdown({ drawerIsOpen, toggleDrawer }: { drawerIsOpen: boolean; toggleDrawer: () => void }) {
    const [menuItems, setMenuItems] = useState([
       { _id: 1, link: "#", text: "Home" },
       { _id: 2, link: "#", text: "About" },
