@@ -22,6 +22,7 @@ jobs:
       run: npm install -g typescript tsc
 
     - name: Compile
+      working-directory: ./realmApp
       run: tsc
 
     - name: Install AppServices Package
