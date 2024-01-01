@@ -18,11 +18,11 @@ jobs:
       with:
         node-version: '16' # You can choose the Node.js version
 
-    - name: Install TypeScript
-      run: npm install -g typescript
+    - name: Install TypeScript & TSC
+      run: npm install -g typescript tsc
 
     - name: Compile
-      run: npm tsc
+      run: tsc
 
     - name: Install AppServices Package
       run: npm install -g atlas-app-services-cli
