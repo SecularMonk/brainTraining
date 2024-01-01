@@ -22,7 +22,7 @@ jobs:
       run: npm install -g typescript
 
     - name: Compile
-      run: tsc
+      run: npm tsc
 
     - name: Install AppServices Package
       run: npm install -g atlas-app-services-cli
