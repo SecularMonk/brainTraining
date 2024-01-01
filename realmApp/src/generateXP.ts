@@ -1,4 +1,5 @@
 // TRIGGER: Quizzes.complete === true
+//@ts-ignore
 exports = async function (arg) {
    const SERVICE_NAME = "Main";
    const DB_NAME = "live";

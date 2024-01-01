@@ -1,3 +1,4 @@
+//@ts-ignore
 exports = async function (arg: any) {
    const SERVICE_NAME = "Main";
    const DB_NAME = "live";

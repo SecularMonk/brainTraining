@@ -1,12 +1,13 @@
 export {};
 
+import { MongoClient } from "mongodb";
+
 export type Services = {
-   (name: string): import("mongodb").MongoClient;
-   // add your other services here
-   // (name: string): any;
+   (name: string): MongoClient;
 };
 
 declare global {
+   type exports = any;
    type ValueOf<T> = T[keyof T];
    namespace context {
       const services: {
