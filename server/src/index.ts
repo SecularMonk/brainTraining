@@ -6,7 +6,7 @@ import { queryResolvers, mutationResolvers, userResolvers } from "./resolvers.js
 import { Quiz, User, Answer, Event, Engagements, DictionaryWord } from "./__generated__/resolvers-types.js";
 import * as dotenv from "dotenv";
 dotenv.config();
-const { MONGODB_CLUSTER, MONGODB_USERNAME, MONGODB_PASSWORD } = process.env ?? {};
+const { MONGODB_CLUSTER, MONGODB_USERNAME, MONGODB_PASSWORD, PORT } = process.env ?? {};
 
 const typeDefs = readFileSync("./graphql/schema.graphql", { encoding: "utf-8" });
 
@@ -34,7 +34,7 @@ const { url } = await startStandaloneServer(server, {
    context: async ({ req }) => ({
       dataSources,
    }),
-   listen: { port: 4000 },
+   listen: { port: PORT ? parseInt(PORT) : 4000 },
 });
 
 console.log(`🚀  Server ready at: ${url}`);
