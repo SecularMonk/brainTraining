@@ -117,7 +117,7 @@ export type QueryEngagementsArgs = {
 
 
 export type QueryGetQuizArgs = {
-  userId?: InputMaybe<Scalars['UserId']['input']>;
+  input?: InputMaybe<CreateQuizInput>;
 };
 
 

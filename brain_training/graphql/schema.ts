@@ -25,8 +25,8 @@ export const GET_RANDOM_ICONS = gql`
 `;
 
 export const GET_QUIZ = gql`
-   query GetQuiz($userId: UserId) {
-      getQuiz(userId: $userId) {
+   query GetQuiz($input: CreateQuizInput) {
+      getQuiz(input: $input) {
          _id
          userId
          questions {
@@ -37,11 +37,19 @@ export const GET_QUIZ = gql`
             question
             correctAnswer
             availableAnswers
+            userAnswer
             correct
+            answered
          }
          score
-         complete
          createdAt
+         complete
+         difficulty
+         rewards {
+            _id
+            rewardType
+            rewardAmount
+         }
       }
    }
 `;

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { useQuery, useMutation } from "@apollo/client";
+import { useQuery, useLazyQuery, useMutation } from "@apollo/client";
 import Question from "./Question";
 import QuizOptions from "./QuizOptions";
 import QuizCompleted from "./QuizCompleted";
@@ -22,7 +22,7 @@ export default function QuizContainer({ difficulty = "normal" }) {
    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
    const [userAnswers, setUserAnswers] = useState<UserAnswer[]>([]);
    const [progress, setProgress] = useState(0);
-   const { data: queryData, error: queryError, loading: queryLoading } = useQuery<{ getQuiz: Quiz }>(GET_QUIZ, { variables: { userId: "testUser1" } });
+   const [getQuiz, { data: queryData, error: queryError, loading: queryLoading }] = useLazyQuery<{ getQuiz: Quiz }>(GET_QUIZ);
    const [submitAnswer] = useMutation(SUBMIT_ANSWER, { variables: {} });
 
    if (queryError) console.error(queryError);
@@ -38,12 +38,15 @@ export default function QuizContainer({ difficulty = "normal" }) {
    useEffect(() => {
       setCurrentQuestion(queryData?.getQuiz?.questions?.[currentQuestionIndex]);
       setProgress(calculateProgress());
-      // if (progress === 1) refetch();
    }, [currentQuestionIndex]);
 
    useEffect(() => {
       if (progress === 1) setQuizComplete(true);
    }, [progress]);
+
+   useEffect(() => {
+      getQuiz({ variables: { input: { userId: "testUser1", difficulty: selectedDifficulty } } });
+   }, [selectedDifficulty]);
 
    function restart() {
       setStarted(false);

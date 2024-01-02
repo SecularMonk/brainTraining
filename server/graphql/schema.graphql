@@ -10,7 +10,7 @@ scalar Difficulty
 type Query {
    getUser(userId: String!): User
    getAnything: [Icon]
-   getQuiz(userId: UserId): Quiz
+   getQuiz(input: CreateQuizInput): Quiz
    engagements(userId: UserId): Engagements
    matchWords(word: String): [DictionaryWord]
 }

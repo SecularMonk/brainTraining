@@ -33,9 +33,9 @@ export async function generateNewUserQuiz({
    const quiz = {
       _id: quizId,
       userId,
-      questions,
       difficulty,
       createdAt: new Date(),
+      questions,
    };
 
    const result = await quizzesDataSource.insertOne(quiz);
@@ -47,15 +47,17 @@ export async function generateNewUserQuiz({
 }
 
 function getDifficultySettings(difficulty: Difficulty): DifficultySettings {
-   switch (difficulty) {
-      case "easy": {
-         return { numQuestions: 5, problemSizeRange: { min: 3, max: 3 } };
+   const lowercaseDifficulty = difficulty?.toLowerCase();
+   switch (lowercaseDifficulty) {
+      case "hard": {
+         return { numQuestions: 15, problemSizeRange: { min: 5, max: 7 } };
       }
       case "normal": {
          return { numQuestions: 10, problemSizeRange: { min: 4, max: 6 } };
       }
-      case "hard": {
-         return { numQuestions: 15, problemSizeRange: { min: 5, max: 7 } };
+      case "easy":
+      default: {
+         return { numQuestions: 5, problemSizeRange: { min: 3, max: 3 } };
       }
    }
 }

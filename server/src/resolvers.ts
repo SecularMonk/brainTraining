@@ -4,8 +4,29 @@ import { generateNewUserQuiz } from "./quizzes/generateQuiz.ts";
 import { logger } from "./logger.ts";
 
 export const queryResolvers: QueryResolvers<{ dataSources: typeof dataSources }> = {
-   getQuiz: async (_, { userId }, { dataSources }) => {
-      return dataSources.Quizzes.findOne({ userId }, { sort: { createdAt: -1 }, projection: { "questions.correctAnswer": false } });
+   getQuiz: async (_, { input }, { dataSources }) => {
+      const date = new Date();
+      const { userId, difficulty } = input;
+      const cutoffTime = new Date(date.setTime(date.getTime() - 10000));
+      const result = await dataSources.Quizzes.find(
+         { userId, difficulty, complete: { $ne: true }, createdAt: { $gte: cutoffTime } },
+         { sort: { createdAt: -1 }, projection: { "questions.correctAnswer": false }, limit: 1 }
+      ).toArray();
+      switch (typeof result?.[0]?._id) {
+         case "string": {
+            console.log("string case, result: ", JSON.stringify(result));
+            return result?.[0];
+         }
+         default: {
+            console.log("default case");
+            return await generateNewUserQuiz({
+               userId,
+               difficulty,
+               dictionaryDataSource: dataSources.AllowedStrings,
+               quizzesDataSource: dataSources.Quizzes,
+            });
+         }
+      }
    },
    getUser: async (_, { userId }, { dataSources }) => {
       return dataSources.Users.findOne({ userId });
@@ -28,7 +49,7 @@ export const userResolvers: UserResolvers<{ dataSources: typeof dataSources }> =
 export const mutationResolvers: MutationResolvers<{ dataSources: typeof dataSources }> = {
    createQuiz: async (_, { input }, { dataSources }) => {
       const { userId, difficulty } = input ?? {};
-      await generateNewUserQuiz({ userId, quizzesDataSource: dataSources.Quizzes, dictionaryDataSource: dataSources.AllowedStrings, difficulty });
+      await generateNewUserQuiz({ userId, difficulty, quizzesDataSource: dataSources.Quizzes, dictionaryDataSource: dataSources.AllowedStrings });
       return dataSources.Quizzes.findOne({ userId }, { sort: { createdAt: -1 }, projection: { "questions.correctAnswer": false } });
    },
    submitAnswer: async (_, { answer }, { dataSources }) => {
