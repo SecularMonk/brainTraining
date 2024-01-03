@@ -20,7 +20,9 @@ export default function QuizOptions({ selected, setSelected, setStarted, numQues
       <div className="card-body flex justify-center self-center min-w-fit w-2/3">
          <h2 className="card-title flex justify-center self-center w-fit">Choose your difficulty.</h2>
          <div className="btn-group flex justify-center btn-block">{renderOptions(options)}</div>
-         <p className="flex justify-center self-center">Contains {numQuestions} questions.</p>
+         {(numQuestions && <p className="flex justify-center self-center">Contains {numQuestions} questions.</p>) ?? (
+            <p className="flex justify-center self-center">Loading...</p>
+         )}
          <Button
             key="start"
             intent="cta"
@@ -36,18 +38,18 @@ export default function QuizOptions({ selected, setSelected, setStarted, numQues
    function renderOptions(options: any[]) {
       return (
          options &&
-         options.map((Element) => {
-            const intent = Element.text === selected ? "active" : "inactive";
+         options.map((element, index) => {
+            const intent = element.text === selected ? "active" : "inactive";
             return (
                <Button
-                  key={`quiz-options-${crypto.randomUUID()}`}
+                  key={`quiz-options-${index}`}
                   fullWidth={true}
                   className={buttonGroupStyles({ intent })}
                   onClick={() => {
-                     setSelected(Element.text);
+                     setSelected(element.text);
                   }}
                >
-                  {Element.text}
+                  {element.text}
                </Button>
             );
          })

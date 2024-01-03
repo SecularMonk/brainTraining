@@ -5,13 +5,12 @@ import Question from "./Question";
 import QuizOptions from "./QuizOptions";
 import QuizCompleted from "./QuizCompleted";
 import { Question as IQuestion } from "../../graphql/schema";
-import { recordMultipleAnswers, recordSingleQuizResult } from "../../graphql/mutations";
 import { GET_QUIZ, Quiz, SUBMIT_ANSWER, Answer } from "../../graphql/schema";
 import ProgressBar from "./ProgressBar";
 
 type UserAnswer = { _id: string; answer: Answer["userAnswer"] };
 
-export default function QuizContainer({ difficulty = "normal" }) {
+export default function QuizContainer() {
    const { data: session } = useSession();
 
    const [selectedDifficulty, setSelectedDifficulty] = useState("Normal");
@@ -41,7 +40,10 @@ export default function QuizContainer({ difficulty = "normal" }) {
    }, [currentQuestionIndex]);
 
    useEffect(() => {
-      if (progress === 1) setQuizComplete(true);
+      if (progress === 1) {
+         setQuizComplete(true);
+         getQuiz({ variables: { input: { userId: "testUser1", difficulty: selectedDifficulty, _id: queryData?.getQuiz?._id } }, pollInterval: 1000 });
+      }
    }, [progress]);
 
    useEffect(() => {
@@ -107,18 +109,18 @@ export default function QuizContainer({ difficulty = "normal" }) {
    return (
       <div className="mx-auto max-w-full bg-transparent h-2/3 p-6 flex items-center justify-center content-center">
          <div className="card flex justify-center self-center max-w-fit shadow-xl container min-w-full mx-auto bg-gray-800 h-96 p-6 items-center content-center">
-            {queryLoading && <p>Loading...</p>}
+            {queryLoading && !currentQuestion && <p>Loading...</p>}
             {queryError && (
                <div>
                   <p>Error :(</p>
                </div>
             )}
-            {queryData && started === false && (
+            {currentQuestion && started === false && (
                <QuizOptions
                   selected={selectedDifficulty}
                   setSelected={setSelectedDifficulty}
                   setStarted={setStarted}
-                  numQuestions={queryData?.getQuiz?.questions?.length ?? 0}
+                  numQuestions={queryData?.getQuiz?.questions?.length}
                />
             )}
             {currentQuestion && started === true && <Question questionNumber={currentQuestionIndex} {...currentQuestion} setUserAnswer={answerQuestion} />}

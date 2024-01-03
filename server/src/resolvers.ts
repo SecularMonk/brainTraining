@@ -6,12 +6,19 @@ import { logger } from "./logger.ts";
 export const queryResolvers: QueryResolvers<{ dataSources: typeof dataSources }> = {
    getQuiz: async (_, { input }, { dataSources }) => {
       const date = new Date();
-      const { userId, difficulty } = input;
+      const { _id, userId, difficulty } = input;
       const cutoffTime = new Date(date.setTime(date.getTime() - 10000));
-      const result = await dataSources.Quizzes.find(
-         { userId, difficulty, complete: { $ne: true }, createdAt: { $gte: cutoffTime } },
-         { sort: { createdAt: -1 }, projection: { "questions.correctAnswer": false }, limit: 1 }
-      ).toArray();
+      const query = {
+         userId,
+         difficulty,
+         ...(_id && { _id }),
+         ...(!_id && {
+            complete: { $ne: true },
+            createdAt: { $gte: cutoffTime },
+         }),
+      };
+      console.log("query: ", query);
+      const result = await dataSources.Quizzes.find(query, { sort: { createdAt: -1 }, projection: { "questions.correctAnswer": false }, limit: 1 }).toArray();
       switch (typeof result?.[0]?._id) {
          case "string": {
             console.log("string case, result: ", JSON.stringify(result));

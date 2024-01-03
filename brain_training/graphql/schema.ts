@@ -97,6 +97,15 @@ export type Quiz = {
    questions?: Question[];
    score?: number;
    userId: string;
+   complete?: boolean;
+   difficulty: string;
+   rewards?: Transaction[];
+};
+
+export type Transaction = {
+   _id?: string;
+   rewardAmount?: number;
+   rewardType?: string;
 };
 
 export type Question = {

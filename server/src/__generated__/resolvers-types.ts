@@ -46,6 +46,7 @@ export type AnswerInput = {
 };
 
 export type CreateQuizInput = {
+  _id?: InputMaybe<Scalars['QuizId']['input']>;
   difficulty?: InputMaybe<Scalars['Difficulty']['input']>;
   userId: Scalars['UserId']['input'];
 };

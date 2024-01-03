@@ -1,19 +1,26 @@
 import { Quiz } from "@/graphql/schema";
 import Button from "./Button";
-import { useState } from "react";
+import RewardDisplay from "./RewardDisplay";
+import { useState, useEffect } from "react";
 
 type QuizCompletedParams = { quiz: Quiz; restart: () => void };
 
 export default function QuizCompleted({ quiz, restart }: QuizCompletedParams) {
-   const [quizStats] = useState(getQuizStats(quiz));
+   const [quizStats, setQuizStats] = useState(getQuizStats(quiz));
+
+   useEffect(() => {
+      setQuizStats(getQuizStats(quiz));
+   }, [quiz]);
+
    return (
-      <div className="card-body card flex justify-center self-center w-fit min-w-full">
-         <h2 className="card-title">Completed!</h2>
+      <div className="card-body card flex justify-center self-center w-2/3">
+         <h2 className="card-title justify-center self-center">Completed!</h2>
          {quizStats?.correctAnswers && quizStats.totalQuestions && (
-            <p>
+            <p className="justify-center self-center">
                You scored {quizStats.correctAnswers} out of {quizStats.totalQuestions}.
             </p>
          )}
+         {quiz?.rewards && quizStats?.rewardSums && <RewardDisplay intent="primary" rewards={quizStats?.rewardSums} />}
 
          <Button intent="primary">Continue</Button>
          <Button
@@ -37,5 +44,18 @@ function getQuizStats(quiz: Quiz) {
       if (quiz.questions[i].answered === true) totalAnswers++;
       if (quiz.questions[i].correct === true) correctAnswers++;
    }
-   return { totalQuestions, totalAnswers, correctAnswers };
+
+   const rewardSums = {};
+   if (quiz?.rewards?.length !== undefined && quiz?.rewards?.length > 0) {
+      for (let i = 0, n = quiz.rewards.length; i < n; i++) {
+         const { rewardType, rewardAmount } = quiz.rewards[i] ?? {};
+         if (!rewardType || !rewardAmount) continue;
+         if (rewardSums?.[rewardType]) {
+            rewardSums[rewardType] += rewardAmount;
+         } else {
+            rewardSums[rewardType] = rewardAmount;
+         }
+      }
+   }
+   return { totalQuestions, totalAnswers, correctAnswers, rewardSums };
 }

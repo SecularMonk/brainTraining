@@ -67,7 +67,7 @@ async function generateStringsAndValues(numItems: number = 3, dictionaryDataSour
       const internalValues: QuestionInitialisationData[] = [];
       const aggregationResult = await generateSanitisedStrings({ dataSource: dictionaryDataSource, numStrings: numItems });
       const valueNames = aggregationResult?.[0]?.words;
-      console.log("valueNames: ", JSON.stringify(valueNames));
+      // console.log("valueNames: ", JSON.stringify(valueNames));
       for (let i = 0, n = valueNames.length; i < n; i++) {
          const value = Math.floor(Math.random() * 2);
          internalValues.push({ value, valueName: valueNames?.[i] });
@@ -100,9 +100,9 @@ function createProblemStatement({ initialisationData }: { initialisationData: Aw
 
 async function createQuestion({ quizId, problemSize, dictionaryDataSource }) {
    const initialisationData = await generateStringsAndValues(problemSize, dictionaryDataSource);
-   console.log("initialisationData: ", initialisationData);
+   // console.log("initialisationData: ", initialisationData);
    const problemStatement = createProblemStatement({ initialisationData });
-   console.log("problemStatement: ", problemStatement);
+   // console.log("problemStatement: ", problemStatement);
    if (!initialisationData) {
       throw new Error("Did not receive correct initialisation data.");
    }

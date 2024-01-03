@@ -95,6 +95,7 @@ input AnswerInput {
 }
 
 input CreateQuizInput {
+   _id: QuizId
    userId: UserId!
    difficulty: Difficulty
 }
